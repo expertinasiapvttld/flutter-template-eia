@@ -1,0 +1,28 @@
+# This file is a template, and might need editing before it works on your project.
+# You can copy and paste this template into a new `.gitlab-ci.yml` file.
+# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
+#
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Flutter.gitlab-ci.yml
+
+code_quality:
+  stage: test
+  image: "ghcr.io/cirruslabs/flutter:3.10.3"
+    
+  before_script:
+    - bash ./generate.env.sh dev
+    - flutter pub global activate dart_code_metrics
+    - export PATH="$PATH:$HOME/.pub-cache/bin"
+    - flutter clean
+    - flutter pub get
+    - flutter --version
+
+  script:
+    - flutter analyze
+  # only:
+  #   - merge_requests
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
